@@ -1,8 +1,10 @@
 import "twin.macro";
 import { css } from "@emotion/css";
 import Image from "next/image";
+import Link from "next/link";
 
 interface ImageTagProps {
+  tagId: string;
   tagName: string;
 }
 
@@ -12,58 +14,65 @@ const imageTagStyle = css`
 `;
 
 const ImageTag = (props: ImageTagProps) => {
-  const tagLink = "";
+  const tagLink = `/tag/${props.tagId}`;
   return (
     <div tw="m-1 rounded-lg" className={imageTagStyle}>
-      <a href={tagLink} tw="hover:no-underline px-2.5 py-0.5">
+      <Link href={tagLink} tw="hover:underline px-2.5 py-0.5">
         {props.tagName}
-      </a>
+      </Link>
     </div>
   );
 };
 
 interface PostedImageProps {
+  postedImageId: string;
   tags: string[];
   title: string;
+  thumbnailUrl: string;
+  user: PostedUser;
+}
+export interface PostedUser {
+  userId: string;
+  userName: string;
+  userIcon: string;
 }
 
 export const PostedImage = (props: PostedImageProps) => {
-  const thumbnailImg = "/imgs/thumbnail.png";
-  const userIconImg = "/imgs/icon.png";
-  const userLink = "";
-  const articleLink = "";
+  const imageLink = `/image/${props.postedImageId}`;
+  const userLink = `/user/${props.user.userId}`;
   return (
     <article tw="w-auto inline-block relative">
-      <a tw="absolute inset-0" href={articleLink}></a>
-      <Image src={thumbnailImg} alt="thumbnail" width={305} height={222} />
+      <Link tw="absolute inset-0 z-0" href={imageLink}></Link>
+      <Image
+        src={props.thumbnailUrl}
+        alt="thumbnail"
+        width={305}
+        height={222}
+      />
       <div tw="mx-2.5 my-1.5">
         <header tw="flex items-end">
-          <a href={userLink} tw="z-10">
+          <Link href={userLink} tw="z-10">
             <Image
-              src={userIconImg}
+              src={props.user.userIcon}
               alt="user icon"
               tw="rounded-full"
               width={40}
               height={40}
             />
-          </a>
-          <a tw="ml-2 text-justify text-xl z-10" href={userLink}>
-            ユーザー
-          </a>
+          </Link>
+          <Link tw="ml-2 text-justify text-xl z-10" href={userLink}>
+            {props.user.userName}
+          </Link>
         </header>
-        <div tw="mt-1 relative">
-          <h2>
-            <a tw="text-3xl z-10" href={articleLink}>
-              {props.title}
-            </a>
-          </h2>
-        </div>
-        <div>
-          <div tw="flex">
-            {props.tags.map((tag) => (
-              <ImageTag key={tag} tagName={tag} />
-            ))}
-          </div>
+        <h2 tw="mt-1 relative">
+          <Link tw="text-3xl z-10" href={imageLink}>
+            {props.title}
+          </Link>
+        </h2>
+        <div tw="flex z-10 relative">
+          {props.tags.map((tag) => (
+            <ImageTag key={tag} tagId={tag} tagName={tag} />
+          ))}
         </div>
       </div>
     </article>
